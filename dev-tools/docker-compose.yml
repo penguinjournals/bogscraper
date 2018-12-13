@@ -1,0 +1,12 @@
+version: "3"
+services:
+  postgresql:
+    image: postgres:9.6.8
+    container_name: bog-scraper-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "bog"
+      POSTGRES_PASSWORD: "bog"
+      POSTGRES_DB: "bog"
+      PGDATA: "/var/lib/postgresql/data/pgdata"

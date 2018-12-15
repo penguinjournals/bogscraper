@@ -5,6 +5,8 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,15 +16,23 @@ import java.sql.DriverManager;
  *
  */
 public class App {
+
+    private static final Logger LOG = LoggerFactory.getLogger(App.class);
+
     private static Config config = new Config();
 
     public static void main(final String[] args) {
-        bootstrapDatabase();
-        System.out.println("Hello World!");
-    }
-
-    private static void bootstrapDatabase() {
+        LOG.info("Database migrations");
         Flyway flyway = Flyway.configure().dataSource(config.getDatabaseConnection(), config.getDatabaseUser(), config.getDatabasePassword()).load();
         flyway.migrate();
+        try {
+            run(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void run(final String[] args) {
+        LOG.info("Scrapping");
     }
 }

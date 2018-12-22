@@ -1,20 +1,9 @@
 package com.penguinjournals;
 
 import org.flywaydb.core.Flyway;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Result;
-import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-
-/**
- * Hello world!
- *
- */
 public class App {
 
     private static final Logger LOG = LoggerFactory.getLogger(App.class);

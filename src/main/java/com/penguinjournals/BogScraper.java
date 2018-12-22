@@ -11,10 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class BogScraper {
     private static final Logger LOG = LoggerFactory.getLogger(BogScraper.class);
@@ -35,7 +36,6 @@ public class BogScraper {
             dailyBogAnnoucement = Jsoup.connect(dailyBogUrl).timeout(MAXIMUM_SCRAP_TIMEOUT).get();
             List<String> announcements = retrieveAnnouncements(dailyBogAnnoucement);
             for (String announcementUrl : announcements) {
-                LOG.info(announcementUrl);
                 parseAnnouncement(announcementUrl);
             }
         } catch (IOException e) {
@@ -48,11 +48,24 @@ public class BogScraper {
         try {
             bogAnnouncement = Jsoup.parse(new URL(bogAnnouncementUrl).openStream(), "Windows-1252", bogAnnouncementUrl,
                     Parser.htmlParser());
-            String jsonAnnouncement = html2jsonBogAnnouncement(bogAnnouncement);
-            LOG.info(jsonAnnouncement);
+            LocalDate announcementDate = extractDateFromAnnouncement(bogAnnouncement);
+            String announcementRawText = bogAnnouncement.toString();
+            String announcementInfo = html2jsonBogAnnouncement(bogAnnouncement);
+            InfoPiece infoPiece = new InfoPiece(announcementDate,
+                                                announcementInfo,
+                                                announcementRawText);
+            LOG.info(String.valueOf(infoPiece.getDate()));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private LocalDate extractDateFromAnnouncement(final Document bogAnnouncement) {
+        Locale locale = new Locale("es", "ES");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("EEEE, 'a' dd 'de' MMMM 'de' yyyy", locale);
+        String bogDate = bogAnnouncement.getElementById("fecha").text().toLowerCase();
+        LocalDate localDate = LocalDate.parse(bogDate, dateTimeFormatter);
+        return localDate;
     }
 
     private String html2jsonBogAnnouncement(final Document bogAnnouncement) {
@@ -65,7 +78,7 @@ public class BogScraper {
         String rawBody = bogAnnouncement.getElementById("cuerpoAnuncio").text();
         String htmlBody = bogAnnouncement.getElementById("cuerpoAnuncio").outerHtml();
         Gson gson = new Gson();
-        BogAnnouncement announcement = new BogAnnouncement(bogNumber,
+        BogAnnouncementInfo announcement = new BogAnnouncementInfo(bogNumber,
                                                             bogDate,
                                                             sectionNumber,
                                                             sectionDescription,
@@ -80,9 +93,8 @@ public class BogScraper {
         Elements followableLinks = dailyBogAnnoucement.getElementsByClass("descarga_html");
         List<String> announcements = new ArrayList<String>();
         for (Element link : followableLinks) {
-            //announcements.add(link.attr("abs:href"));
+            announcements.add(link.attr("abs:href"));
         }
-        announcements.add("https://egoitza.gipuzkoa.eus/gao-bog/castell/bog/2018/12/13/c1808044.htm");
         return announcements;
     }
 }

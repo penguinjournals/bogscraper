@@ -1,6 +1,6 @@
 package com.penguinjournals;
 
-public class BogAnnouncement {
+public class BogAnnouncementInfo {
     private String bogNumber;
     private String bogDate;
     private String sectionNumber;
@@ -10,7 +10,7 @@ public class BogAnnouncement {
     private String rawBody;
     private String htmlBody;
 
-    public BogAnnouncement(String bogNumber, String bogDate, String sectionNumber, String sectionDescription, String agency, String department, String rawBody, String htmlBody) {
+    public BogAnnouncementInfo(String bogNumber, String bogDate, String sectionNumber, String sectionDescription, String agency, String department, String rawBody, String htmlBody) {
         this.bogNumber = bogNumber;
         this.bogDate = bogDate;
         this.sectionNumber = sectionNumber;

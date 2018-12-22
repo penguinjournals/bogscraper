@@ -22,6 +22,7 @@ public class App {
     }
 
     public static void run(final String[] args) {
-        LOG.info("Scrapping");
+        BogScraper bogScraper = new BogScraper();
+        bogScraper.scrap();
     }
 }

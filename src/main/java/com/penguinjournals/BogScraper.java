@@ -36,6 +36,7 @@ public class BogScraper {
             dailyBogAnnoucement = Jsoup.connect(dailyBogUrl).timeout(MAXIMUM_SCRAP_TIMEOUT).get();
             List<String> announcements = retrieveAnnouncements(dailyBogAnnoucement);
             for (String announcementUrl : announcements) {
+                LOG.info("Announcement URL:" + announcementUrl);
                 parseAnnouncement(announcementUrl);
             }
         } catch (IOException e) {
@@ -54,7 +55,6 @@ public class BogScraper {
             InfoPiece infoPiece = new InfoPiece(announcementDate,
                                                 announcementInfo,
                                                 announcementRawText);
-            LOG.info(String.valueOf(infoPiece.getDate()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,6 +69,7 @@ public class BogScraper {
     }
 
     private String html2jsonBogAnnouncement(final Document bogAnnouncement) {
+        // TODO: parse correctly when nro_seccion == 3
         String bogNumber = bogAnnouncement.getElementById("nro_boletin").text();
         String bogDate = bogAnnouncement.getElementById("fecha").text();
         String sectionNumber = bogAnnouncement.getElementById("nro_seccion").text();

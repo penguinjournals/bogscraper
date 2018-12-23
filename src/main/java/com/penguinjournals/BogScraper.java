@@ -14,6 +14,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -69,25 +70,50 @@ public class BogScraper {
     }
 
     private String html2jsonBogAnnouncement(final Document bogAnnouncement) {
-        // TODO: parse correctly when nro_seccion == 3
+        BogAnnouncementInfo announcementInfo = null;
+        String announcementType = bogAnnouncement.getElementById("nro_seccion").text();
+        String[] norma000announcementAgencies = {"3", "6", "7", "8"};
+        if (Arrays.stream(norma000announcementAgencies).anyMatch(announcementType::equals)) {
+            announcementInfo = parseNorma000Announcement(bogAnnouncement);
+        } else {
+            announcementInfo = parseNorma00Announcement(bogAnnouncement);
+        }
+        Gson gson = new Gson();
+        return gson.toJson(announcementInfo);
+    }
+
+    private BogAnnouncementInfo parseNorma000Announcement(final Document bogAnnouncement) {
+        String agencyClassName = "norma_000";
+        String departmentClassName = "norma_000";
+        return parseAnnouncement(bogAnnouncement, agencyClassName, departmentClassName);
+    }
+
+    private BogAnnouncementInfo parseNorma00Announcement(final Document bogAnnouncement) {
+        String agencyClassName = "norma00";
+        String departmentClassName = "norma01";
+        return parseAnnouncement(bogAnnouncement, agencyClassName, departmentClassName);
+    }
+
+    private BogAnnouncementInfo parseAnnouncement(final Document bogAnnouncement, final String agencyClassName, final String departmentClassName) {
         String bogNumber = bogAnnouncement.getElementById("nro_boletin").text();
         String bogDate = bogAnnouncement.getElementById("fecha").text();
         String sectionNumber = bogAnnouncement.getElementById("nro_seccion").text();
         String sectionDescription = bogAnnouncement.getElementById("desc_seccion").text();
-        String agency = bogAnnouncement.getElementsByClass("norma00").get(0).text();
-        String department = bogAnnouncement.getElementsByClass("norma01").get(0).text();
+        String agency = bogAnnouncement.getElementsByClass(agencyClassName).get(0).text();
+        String department = bogAnnouncement.getElementsByClass(departmentClassName).get(0).text();
         String rawBody = bogAnnouncement.getElementById("cuerpoAnuncio").text();
         String htmlBody = bogAnnouncement.getElementById("cuerpoAnuncio").outerHtml();
-        Gson gson = new Gson();
-        BogAnnouncementInfo announcement = new BogAnnouncementInfo(bogNumber,
-                                                            bogDate,
-                                                            sectionNumber,
-                                                            sectionDescription,
-                                                            agency,
-                                                            department,
-                                                            rawBody,
-                                                            htmlBody);
-        return gson.toJson(announcement);
+
+        BogAnnouncementInfo announcement = new BogAnnouncementInfo(bogDate,
+                bogNumber,
+                sectionNumber,
+                sectionDescription,
+                agency,
+                department,
+                rawBody,
+                htmlBody);
+
+        return announcement;
     }
 
     private List<String> retrieveAnnouncements(final Document dailyBogAnnoucement) {

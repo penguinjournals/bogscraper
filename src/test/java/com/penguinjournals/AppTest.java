@@ -1,5 +1,6 @@
 package com.penguinjournals;
 
+import com.google.gson.Gson;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -37,14 +38,13 @@ public class AppTest
      */
     public void testApp()
     {
-        Locale locale = new Locale("es", "ES");
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("EEEE, 'a' dd 'de' MMMM 'de' yyyy", locale);
-        //DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("EEEE, 'a' dd 'de' MMMM 'de' YYYY", locale);
-        String expected = "jueves, a 13 de diciembre de 2018";
-        //String expected = "jueves, a 13 de diciembre de 2018";
-        String actual = LocalDate.now().minusDays(9).format(dateTimeFormatter);
-        System.out.println(actual);
-        LocalDate localDate = LocalDate.parse(actual, dateTimeFormatter);
-        assertEquals(expected, actual);
+        LocalDate announcementDate = LocalDate.now();
+        String announcementRawText = "fake raw text";
+        String announcementInfo = "{\"fakefield\": \"fakeFieldContent\"}";
+        InfoPiece infoPiece = new InfoPiece(announcementDate,
+                announcementInfo,
+                announcementRawText);
+        infoPiece.store();
+        assertEquals(true, true);
     }
 }

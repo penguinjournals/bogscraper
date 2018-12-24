@@ -2,6 +2,6 @@ CREATE TABLE document
 (
     id SERIAL PRIMARY KEY,
     date TIMESTAMP WITH TIME ZONE,
-    info JSONB,
+    info JSON,
     raw TEXT
 );

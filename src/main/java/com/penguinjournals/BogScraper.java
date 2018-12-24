@@ -56,6 +56,7 @@ public class BogScraper {
             InfoPiece infoPiece = new InfoPiece(announcementDate,
                                                 announcementInfo,
                                                 announcementRawText);
+            infoPiece.store();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,13 +1,15 @@
 package com.penguinjournals;
 
+import com.google.gson.Gson;
+
 import java.time.LocalDate;
 
-public class InfoPiece {
+public class JsonBasedInfoPiece {
     private LocalDate date;
-    private String info;
+    private Gson info;
     private String raw;
 
-    public InfoPiece(final LocalDate date, final String info, final String raw) {
+    public JsonBasedInfoPiece(final LocalDate date, final String info, final String raw) {
         this.date = date;
         this.info = info;
         this.raw = raw;
